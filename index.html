@@ -1139,7 +1139,7 @@
     if (window.self === window.top) return;
     var height = window.matchMedia("(min-width: 821px)").matches
       ? DESIGN_HEIGHT
-      : Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+      : Math.max(document.body.scrollHeight, document.body.offsetHeight);
     /* No slack: a padded height comes back as a taller frame on the next tick
        and the iframe grows without bound. */
     window.parent.postMessage({ frameHeight: Math.ceil(height) }, "*");
