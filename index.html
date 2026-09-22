@@ -1139,12 +1139,10 @@
     if (window.self === window.top) return;
     var height = window.matchMedia("(min-width: 821px)").matches
       ? DESIGN_HEIGHT
-      : Math.max(document.documentElement.getBoundingClientRect().height,
-                 document.body.getBoundingClientRect().height,
-                 document.documentElement.scrollHeight);
-    /* +1 for the same reason as the other repos: a rounded-down height leaves the
-       document scrollable by a fraction of a pixel, which eats wheel events. */
-    window.parent.postMessage({ frameHeight: Math.ceil(height) + 1 }, "*");
+      : Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    /* No slack: a padded height comes back as a taller frame on the next tick
+       and the iframe grows without bound. */
+    window.parent.postMessage({ frameHeight: Math.ceil(height) }, "*");
   }
   window.addEventListener("load", sendHeight);
   window.addEventListener("resize", sendHeight);
