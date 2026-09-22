@@ -1127,9 +1127,20 @@
 
 <script>
   /* Auto-resize: sends page height to parent so WordPress can resize the iframe accordingly */
+  /* Desktop is a fixed-viewport app: html/body are height:100%, so a measured
+     height only ever echoes back whatever the iframe already is. Combined with
+     the old Math.max(..., window.innerHeight) that made this a ratchet — narrow
+     the window once and the frame grew and never shrank, leaving a tall blank
+     gap above the footer. So report the DESIGNED height above the 820px
+     breakpoint, and the real measured height below it, where the layout
+     becomes a normal scrolling page. */
+  var DESIGN_HEIGHT = 900;
   function sendHeight() {
-    var height = Math.max(document.documentElement.scrollHeight, window.innerHeight);
-    window.parent.postMessage({ frameHeight: height }, "*");
+    if (window.self === window.top) return;
+    var height = window.matchMedia("(min-width: 821px)").matches
+      ? DESIGN_HEIGHT
+      : Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    window.parent.postMessage({ frameHeight: Math.ceil(height) }, "*");
   }
   window.addEventListener("load", sendHeight);
   window.addEventListener("resize", sendHeight);
