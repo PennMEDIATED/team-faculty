@@ -1127,27 +1127,42 @@
 
 <script>
   /* Auto-resize: sends page height to parent so WordPress can resize the iframe accordingly */
-  /* Desktop is a fixed-viewport app: html/body are height:100%, so a measured
-     height only ever echoes back whatever the iframe already is. Combined with
-     the old Math.max(..., window.innerHeight) that made this a ratchet — narrow
-     the window once and the frame grew and never shrank, leaving a tall blank
-     gap above the footer. So report the DESIGNED height above the 820px
-     breakpoint, and the real measured height below it, where the layout
-     becomes a normal scrolling page. */
-  var DESIGN_HEIGHT = 900;
+  /* Measured, like every other Penn MEDIATED repo — no special-casing.
+
+     This used to report a hardcoded DESIGN_HEIGHT above 820px, because
+     html/body carried height: 100% and #page carried height: 100vh, so a
+     measured height only ever echoed back whatever the iframe already was.
+     Both of those are gone (see styles.css): #page now has a definite 900px
+     and body sizes to it, so the measurement is true at every width and the
+     workaround is not only unnecessary but wrong — it was reporting 900px
+     while the real content was 780px, leaving 120px of dead space.
+
+     MEASURE THE BODY, NEVER documentElement. <html> stretches to fill the
+     frame, so documentElement.scrollHeight can never report LESS than the
+     frame's current height — feeding that back pins the iframe and it can
+     never shrink. */
+  var lastSentHeight = 0;
   function sendHeight() {
     if (window.self === window.top) return;
-    var height = window.matchMedia("(min-width: 821px)").matches
-      ? DESIGN_HEIGHT
-      : Math.max(document.body.scrollHeight, document.body.offsetHeight);
+    var h = Math.ceil(Math.max(document.body.scrollHeight, document.body.offsetHeight));
     /* No slack: a padded height comes back as a taller frame on the next tick
-       and the iframe grows without bound. */
-    window.parent.postMessage({ frameHeight: Math.ceil(height) }, "*");
+       and the iframe grows without bound. 2px of hysteresis stops sub-pixel
+       jitter from ping-ponging. */
+    if (Math.abs(h - lastSentHeight) < 2) return;
+    lastSentHeight = h;
+    window.parent.postMessage({ frameHeight: h }, "*");
   }
   window.addEventListener("load", sendHeight);
   window.addEventListener("resize", sendHeight);
-  var _heightObserver = new ResizeObserver(sendHeight);
-  _heightObserver.observe(document.body);
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(sendHeight); }
+  if (window.ResizeObserver) { new ResizeObserver(sendHeight).observe(document.body); }
+  /* Late-settling layout: webfonts swapping in, images decoding, a lazy
+     iframe resolving. ResizeObserver catches most of it, but a change that
+     lands between the last observed tick and paint can leave the frame a
+     few px short of the content. Two cheap re-measures after load close
+     that window; sendHeight's hysteresis makes a no-op re-post free. */
+  setTimeout(sendHeight, 300);
+  setTimeout(sendHeight, 1200);
 </script>
 </body>
 </html>
