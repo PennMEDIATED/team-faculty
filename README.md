@@ -1,6 +1,6 @@
 # Penn MEDIATED — Faculty
 
-The Faculty page for the [Center on Media, Technology and Democracy](https://mediated.upenn.edu). Static HTML/CSS/JS, no build step. Mirrors the content at https://mediated.upenn.edu/team-faculty/.
+The Faculty page for the [Center on Media, Technology and Democracy](https://mediated.upenn.edu). Static HTML/CSS/JS, no build step. Mirrors the content at https://mediated.upenn.edu/faculty/.
 
 This page **is** the interactive Faculty Research Network diagram — the same tool published at [penn-mediated/Faculty-Research-Network](https://github.com/penn-mediated/Faculty-Research-Network), rebuilt here in the shared Penn MEDIATED style guide (same design tokens, fonts, and brand colors as [`about`](https://github.com/PennMEDIATED/about), [`home`](https://github.com/PennMEDIATED/home), and [`grants`](https://github.com/PennMEDIATED/grants)) so it reads as part of the same site instead of a visually separate tool. Like the source repo, this page is meant to be embedded via iframe in WordPress — it posts its rendered height to the parent frame on load/resize so the iframe can auto-size.
 
@@ -61,7 +61,7 @@ All four repos are static HTML/CSS/JS built off the same design system. If you'r
 
 ### A note on this page's layout
 
-Unlike `about`/`home`/`grants`, this page is a fixed-viewport 3-column app (`html, body { height: 100%; overflow: hidden; }`), not a scrolling editorial page — it has no nav bar, no footer, and no shared newsletter/supporters block, matching the actual page currently live at mediated.upenn.edu/team-faculty/ (which is this diagram, embedded via iframe, with WordPress supplying the surrounding chrome). Below 820px it becomes a normal scrolling page (diagram → faculty panel → bio/detail). Don't backport the fixed-viewport pattern to the other repos or the shared newsletter pattern to this one — they solve different problems.
+Unlike `about`/`home`/`grants`, this page is a fixed-viewport 3-column app (`html, body { height: 100%; overflow: hidden; }`), not a scrolling editorial page — it has no nav bar, no footer, and no shared newsletter/supporters block, matching the actual page currently live at mediated.upenn.edu/faculty/ (which is this diagram, embedded via iframe, with WordPress supplying the surrounding chrome). Below 820px it becomes a normal scrolling page (diagram → faculty panel → bio/detail). Don't backport the fixed-viewport pattern to the other repos or the shared newsletter pattern to this one — they solve different problems.
 
 ### Typography
 
